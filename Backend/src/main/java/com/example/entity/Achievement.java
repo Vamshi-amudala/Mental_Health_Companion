@@ -22,7 +22,7 @@ public class Achievement {
 	@Column(nullable = false)
 	private User user;
 	@Column(nullable = false)
-	private String type;//badge,streak, etc....
+	private String type;
 	@Column(nullable = false)
 	private String description;
 	@Column(nullable = false)
