@@ -24,10 +24,12 @@ public class User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	@Column(nullable = false)
-	private String name;
+	
+	private String username;
+	
     @Column(nullable = false, unique = true)
 	private String email;
+    
 	@Column(nullable = false)
 	private String password;
 	
@@ -44,7 +46,10 @@ public class User {
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	List<Achievement> achievements;
 	
+
+	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
 	private AchievementType type;
+
 
 }
