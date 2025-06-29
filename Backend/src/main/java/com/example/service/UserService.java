@@ -20,6 +20,9 @@ public class UserService {
 	private UserRepo userRepo;
 
 	@Autowired
+	private BadgeService badgeService; 
+	
+	@Autowired
 	private PasswordEncoder passwordEncoder;
 
 	public String register(RegisterRequestDto dto) {
@@ -36,8 +39,10 @@ public class UserService {
 			user.setPassword(passwordEncoder.encode(dto.getPassword()));
 
 			userRepo.save(user);
+			badgeService.awardFirstLoginBadge(user);
+			  
 			return "Welcome to MindMate 💚 You're not alone—your journey to better mental well-being starts today.";
-
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RuntimeException("Registration failed: " + e.getMessage());

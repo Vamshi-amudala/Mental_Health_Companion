@@ -8,7 +8,8 @@ import org.springframework.stereotype.Repository;
 import com.example.entity.MoodCheckIn;
 @Repository
 public interface MoodCheckInRepo extends JpaRepository<MoodCheckIn, Long>{
-    // This method for getting check-ins by user ordered by date
+   
+	long countByUserId(Long userId);
     List<MoodCheckIn> findByUserIdOrderByCheckInDateDesc(Long userId);
 
 }
