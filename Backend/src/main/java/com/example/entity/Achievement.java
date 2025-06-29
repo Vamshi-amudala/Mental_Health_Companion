@@ -34,9 +34,10 @@ public class Achievement {
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
-
+   
     @PrePersist
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
     }
+
 }

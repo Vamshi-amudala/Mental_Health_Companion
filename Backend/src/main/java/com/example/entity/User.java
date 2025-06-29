@@ -44,9 +44,7 @@ public class User {
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	List<Achievement> achievements;
 	
-	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
 	private AchievementType type;
-
 
 }
