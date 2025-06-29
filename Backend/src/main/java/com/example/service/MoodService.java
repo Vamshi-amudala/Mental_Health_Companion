@@ -4,6 +4,7 @@ import com.example.dto.MoodCheckInDto;
 import com.example.dto.MoodHistoryDto;
 import com.example.entity.BadgeType;
 import com.example.entity.MoodCheckIn;
+import com.example.entity.MoodTimeSlot;
 import com.example.entity.StreakType;
 import com.example.entity.User;
 import com.example.exception.InvalidMoodException;
@@ -14,7 +15,9 @@ import com.example.repository.UserRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -68,4 +71,29 @@ public class MoodService {
                 ))
                 .collect(Collectors.toList());
     }
+    
+    
+    public void upsertMoodCheckIn(Long userId, int moodLevel, MoodTimeSlot timeSlot) {
+        User user = userRepo.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
+
+        LocalDate today = LocalDate.now();
+        Optional<MoodCheckIn> existing = moodCheckInRepo.findByUserAndDateAndTimeSlot(user, today, timeSlot);
+
+        if (existing.isPresent()) {
+            MoodCheckIn mood = existing.get();
+            mood.setMoodLevel(moodLevel);
+            mood.setSubmittedAt(LocalDateTime.now());
+            moodCheckInRepo.save(mood);
+        } else {
+            MoodCheckIn mood = new MoodCheckIn();
+            mood.setUser(user);
+            mood.setMoodLevel(moodLevel);
+            mood.setTimeSlot(timeSlot);
+            mood.setCheckInDate(today);
+            mood.setSubmittedAt(LocalDateTime.now());
+            moodCheckInRepo.save(mood);
+        }
+    }
+
 }

@@ -2,6 +2,8 @@ package com.example.dto;
 
 import org.hibernate.validator.constraints.Range;
 
+import com.example.entity.MoodTimeSlot;
+
 import lombok.Data;
 
 @Data
@@ -12,5 +14,7 @@ public class MoodCheckInDto {
 	private Integer moodLevel;
 		
 	private String note;
+	
+	 private MoodTimeSlot timeSlot;
 }
 
