@@ -15,8 +15,11 @@ public interface MoodCheckInRepo extends JpaRepository<MoodCheckIn, Long>{
 	long countByUserId(Long userId);
     List<MoodCheckIn> findByUserIdOrderByCheckInDateDesc(Long userId);
 
-    Optional<MoodCheckIn> findByUserAndDateAndTimeSlot(User user, LocalDate date, MoodTimeSlot timeSlot);
+//    Optional<MoodCheckIn> findByUserAndDateAndTimeSlot(User user, LocalDate checkInDate, MoodTimeSlot timeSlot);
+    Optional<MoodCheckIn> findByUserAndCheckInDateAndTimeSlot(User user, LocalDate checkInDate, MoodTimeSlot timeSlot);
 
     
-    List<MoodCheckIn> findByUserAndDate(User user, LocalDate date);
+//    List<MoodCheckIn> findByUserAndDate(User user, LocalDate date);
+    List<MoodCheckIn> findByUserAndCheckInDate(User user, LocalDate checkInDate);
+
 }

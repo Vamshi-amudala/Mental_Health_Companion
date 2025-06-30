@@ -78,7 +78,7 @@ public class MoodService {
                 .orElseThrow(() -> new UserNotFoundException(userId));
 
         LocalDate today = LocalDate.now();
-        Optional<MoodCheckIn> existing = moodCheckInRepo.findByUserAndDateAndTimeSlot(user, today, timeSlot);
+        Optional<MoodCheckIn> existing = moodCheckInRepo.findByUserAndCheckInDateAndTimeSlot(user, today, timeSlot);
 
         if (existing.isPresent()) {
             MoodCheckIn mood = existing.get();

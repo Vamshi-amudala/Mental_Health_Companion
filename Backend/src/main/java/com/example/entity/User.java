@@ -1,5 +1,6 @@
 package com.example.entity;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
@@ -50,6 +51,13 @@ public class User {
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
 	private AchievementType type;
+	
+	
+    @Column(name = "otp_code")
+    private Long otpCode;
+
+    @Column(name = "otp_expiration")
+    private LocalDateTime otpExpiration;
 
 
 }

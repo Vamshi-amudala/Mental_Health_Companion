@@ -40,7 +40,9 @@ public class SecurityConfig {
 	                .requestMatchers(
 	                    "/",
 	                    "/auth/register",
-	                    "/auth/login"
+	                    "/auth/login",
+	                    "/auth/forgot-password",
+	                    "/auth/reset-password-with-otp"
 	                ).permitAll()
 	                .anyRequest().authenticated()
 	            )

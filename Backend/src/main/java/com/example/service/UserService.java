@@ -1,6 +1,9 @@
 package com.example.service;
 
+import java.time.LocalDateTime;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -21,6 +24,9 @@ public class UserService {
 
 	@Autowired
 	private BadgeService badgeService; 
+	
+	@Autowired
+	private EmailService emailService;
 	
 	@Autowired
 	private PasswordEncoder passwordEncoder;
@@ -59,7 +65,43 @@ public class UserService {
 	        throw new RuntimeException("Invalid password");
 	    }
 
-	    return "Login successful. Welcome back, " + user.getFullname() + "! 💚";
+	    return "Login successful! 🌿 Welcome back to MindMate, " + user.getFullname() + "! 💚";
 	}
+	
+	public void sendOtp(String email) {
+		
+		User user = userRepo.findByemail(email)
+				.orElseThrow(()-> new UsernameNotFoundException("No account found with this email. Please register."));
+		
+		Long otp =  (long) new java.security.SecureRandom().nextInt(1000000);
+		user.setOtpCode(otp);
+		user.setOtpExpiration(LocalDateTime.now().plusMinutes(5));
+		
+		userRepo.save(user);
+		
+		emailService.sendOtpEmail(user.getEmail(), otp);
+	}
+	
+	 public void verifyOtpAndResetPassword(String email, Long otp, String newPassword) {
+	        User user = userRepo.findByemail(email)
+	            .orElseThrow(() -> new UsernameNotFoundException("Email not found"));
+	        
+	        if (user.getOtpCode() == null || !otp.equals(user.getOtpCode())) {
+	            throw new BadCredentialsException("Invalid OTP");
+	        }
+
+	        if (user.getOtpExpiration() == null || user.getOtpExpiration().isBefore(LocalDateTime.now())) {
+	            throw new BadCredentialsException("OTP has expired");
+	        }
+
+	        user.setPassword(passwordEncoder.encode(newPassword));
+	        user.setOtpCode(null);
+	        user.setOtpExpiration(null);
+	        userRepo.save(user);
+
+	        
+	        emailService.sendResetPasswordConfirmationEmail(user.getEmail());
+	    }
+
 
 }
