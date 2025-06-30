@@ -18,8 +18,8 @@ public class AiSuggestionController {
 
     @GetMapping("/suggest")
     public ResponseEntity<SuggestionResponseDto> getSuggestion(
-            @RequestParam int moodLevel,
-            @RequestParam MoodTimeSlot timeSlot
+        @RequestParam int moodLevel,
+        @RequestParam MoodTimeSlot timeSlot
     ) {
         String raw = huggingFaceAiService.getSuggestion(moodLevel, timeSlot);
         SuggestionResponseDto dto = suggestionParser.parseResponse(raw);

@@ -3,30 +3,26 @@ package com.example.service;
 import com.example.dto.SuggestionResponseDto;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
-import java.util.regex.*;
+import java.util.Arrays;
+import java.util.List;
 
 @Component
 public class SuggestionParser {
 
     public SuggestionResponseDto parseResponse(String raw) {
         SuggestionResponseDto dto = new SuggestionResponseDto();
-        dto.setSuggestion(extractBlock("Suggestion", raw));
-        dto.setSteps(toList(extractBlock("Steps", raw)));
-        return dto;
-    }
 
-    private String extractBlock(String title, String raw) {
-        String pattern = "(?i)" + title + "\\s*:\\s*(.*?)(?=\\n[A-Z][a-z]+\\s*:|\\Z)";
-        Pattern regex = Pattern.compile(pattern, Pattern.DOTALL);
-        Matcher matcher = regex.matcher(raw);
-        return matcher.find() ? matcher.group(1).trim() : "";
-    }
+        String[] parts = raw.split("Steps:");
+        dto.setSuggestion(parts[0].replace("Suggestion:", "").trim());
 
-    private List<String> toList(String textBlock) {
-        return Arrays.stream(textBlock.split("\\n|\\r|[-•\\d.]"))
+        if (parts.length > 1) {
+            List<String> steps = Arrays.stream(parts[1].split("\\n"))
                 .map(String::trim)
                 .filter(s -> !s.isBlank())
                 .toList();
+            dto.setSteps(steps);
+        }
+
+        return dto;
     }
 }

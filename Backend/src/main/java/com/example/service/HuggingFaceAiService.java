@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Slf4j
 @Service
@@ -26,14 +28,21 @@ public class HuggingFaceAiService {
             "https://api-inference.huggingface.co/models/HuggingFaceH4/zephyr-7b-beta";
 
     public String getSuggestion(int moodLevel, MoodTimeSlot timeSlot) {
-        String prompt = String.format(
-            "Give a calming and short self-care suggestion for someone with mood level %d in the %s.\n" +
-            "Respond like this:\n" +
-            "Suggestion: [your suggestion]\n" +
-            "Steps:\n1. Step one.\n2. Step two.\n3. Step three.\n" +
-            "Do not include explanations or ask questions.",
-            moodLevel, timeSlot.name().toLowerCase()
-        );
+        String prompt = String.format("""
+            Mood Level: %d
+            Time: %s
+
+            Suggest one short calming self-care activity.
+
+            Format your response exactly like this:
+            Suggestion: <short activity>
+            Steps:
+            1. <step one>
+            2. <step two>
+            3. <step three>
+
+            Do not add anything else.
+            """, moodLevel, timeSlot.name().toLowerCase());
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -50,21 +59,44 @@ public class HuggingFaceAiService {
                 String.class
             );
 
-            String raw = extractText(response.getBody());
+            String raw = extractSuggestionBlock(response.getBody());
             log.info("🤖 AI response: {}", raw);
-            return raw.split("If you're not yet familiar|\\[")[0]; // Trim extras
+
+            if (raw == null || raw.isBlank()) {
+                return """
+                    Suggestion: Take a deep breath.
+                    Steps:
+                    1. Sit in a quiet place.
+                    2. Inhale slowly.
+                    3. Exhale fully.
+                    """;
+            }
+
+            return raw;
 
         } catch (Exception e) {
             log.error("Hugging Face API failed", e);
-            return "Suggestion: Sit quietly for 5 minutes.\nSteps:\n1. Find a peaceful spot.\n2. Close your eyes.\n3. Focus on your breathing.";
+            return """
+                Suggestion: Sit quietly for 5 minutes.
+                Steps:
+                1. Find a peaceful spot.
+                2. Close your eyes.
+                3. Focus on your breathing.
+                """;
         }
     }
 
-    private String extractText(String json) {
-        int idx = json.indexOf("generated_text");
-        if (idx == -1) return "";
-        int start = json.indexOf(":", idx) + 2;
-        int end = json.indexOf("\"", start);
-        return json.substring(start, end).trim();
+    private String extractSuggestionBlock(String raw) {
+        Pattern pattern = Pattern.compile("Suggestion:\\s*(.*?)\\s*Steps:\\s*1\\.\\s*(.*?)\\s*2\\.\\s*(.*?)\\s*3\\.\\s*(.*?)(\\n|$)", Pattern.DOTALL);
+        Matcher matcher = pattern.matcher(raw);
+        if (matcher.find()) {
+            return String.format("Suggestion: %s\nSteps:\n1. %s\n2. %s\n3. %s",
+                matcher.group(1).trim(),
+                matcher.group(2).trim(),
+                matcher.group(3).trim(),
+                matcher.group(4).trim()
+            );
+        }
+        return null;
     }
 }
