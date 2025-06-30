@@ -18,7 +18,7 @@ public class MentalHealthCompanionApplication {
         System.setProperty("MAIL_USERNAME", dotenv.get("MAIL_USERNAME"));
         System.setProperty("MAIL_PASSWORD", dotenv.get("MAIL_PASSWORD"));
         
-        System.setProperty("OPENAI_API_KEY", dotenv.get("OPENAI_API_KEY"));
+        System.setProperty("HUGGINGFACE_API_KEY", dotenv.get("HUGGINGFACE_API_KEY"));
     }
 
     public static void main(String[] args) {
