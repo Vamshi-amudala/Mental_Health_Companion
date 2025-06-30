@@ -40,7 +40,7 @@ public class AuthController {
         String email = request.get("email");
         userServ.sendOtp(email);
         return ResponseEntity.ok( "We've sent you a one-time code 💌\n" +
-                "Check your inbox (and spam folder) for your MindMate OTP. It’s valid for 5 minutes.");
+                "Check your inbox (and spam folder) for your MindMate💚 OTP. It’s valid for 5 minutes.");
     }
 
     @PostMapping("/reset-password-with-otp")
