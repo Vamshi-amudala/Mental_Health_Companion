@@ -1,23 +1,18 @@
 package com.example.service;
 
 import com.example.dto.AISuggestionDto;
-
+import com.example.entity.MoodTimeSlot;
 import lombok.RequiredArgsConstructor;
-
-import org.springframework.ai.chat.ChatClient;
 import org.springframework.stereotype.Service;
-
 
 @Service
 @RequiredArgsConstructor
 public class AIService {
-    private final ChatClient chatClient;
 
-    // Get a suggestion based on mood
-    public AISuggestionDto getSuggestion(String mood) {
-        String prompt = "Give a short self-care suggestion for someone feeling " + mood + ".";
-        String suggestion = chatClient.call(prompt);
+    private final HuggingFaceAiService huggingFaceAiService;
 
-        return new AISuggestionDto(mood, suggestion);
+    public AISuggestionDto getSuggestion(int moodLevel, MoodTimeSlot timeSlot) {
+        String suggestion = huggingFaceAiService.getSuggestion(moodLevel, timeSlot);
+        return new AISuggestionDto("Mood " + moodLevel + " - " + timeSlot.name(), suggestion);
     }
 }
