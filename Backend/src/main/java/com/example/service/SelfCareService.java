@@ -7,6 +7,7 @@ import com.example.exception.ResourceNotFoundException;
 import com.example.exception.UserNotFoundException;
 import com.example.repository.SelfCareActivityRepo;
 import com.example.repository.UserRepo;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -57,4 +58,5 @@ public class SelfCareService {
         activity.setCompleted(completed);
         selfCareRepo.save(activity);
     }
+
 }

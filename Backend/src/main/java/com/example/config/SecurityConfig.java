@@ -43,7 +43,8 @@ public class SecurityConfig {
 	                    "/auth/login",
 	                    "/auth/forgot-password",
 	                    "/auth/reset-password-with-otp",
-	                    "/api/ai/suggest"
+	                    "/api/ai/suggest",
+	                    "/api/**"
 	                ).permitAll()
 	                .anyRequest().authenticated()
 	            )
